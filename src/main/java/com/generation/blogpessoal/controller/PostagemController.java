@@ -33,7 +33,7 @@ public class PostagemController {
 	private PostagemRepository postagemRepository;
 	
 	@Autowired
-	private TemaRepository temaRepository; // ajustar o metodo put e push//
+	private TemaRepository temaRepository; 
 
 	@GetMapping
 	public ResponseEntity<List<Postagem>> getAll() {
@@ -64,33 +64,39 @@ public class PostagemController {
 	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem){
 			return ResponseEntity.status(HttpStatus.CREATED)
 				.body(postagemRepository.save(postagem));
-	/* INSERT INTO tb_postagens (data, titulo, texto)
-	 * VALUES (?, ?, ?)*/
+	/* INSERT INTO tb_postagens (data, titulo, texto) VALUES (?, ?, ?)*/
 	 
 	}
 	
 	@PutMapping
-	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem){
-		
-		
-		return postagemRepository.findById(postagem.getId())
-				.map(resposta -> ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem)))
-				.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-		// UPDATE tb_postagens SET titulo = "???", texto = "???", data = "???" WHERE id = ?
+	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
+
+		if (postagemRepository.existsById(postagem.getId())) {
+
+			if (temaRepository.existsById(postagem.getTema().getId()))
+				return ResponseEntity.status(HttpStatus.OK).body(postagemRepository.save(postagem));
+
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tema não existe!", null);
+
+		}
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		/*
+		 * UPDATE tb_postagens SET titulo = ?, texto = ?, data = ? WHERE id = id
+		 */
 	}
-	
+
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@DeleteMapping("{id}")
+	@DeleteMapping("/{id}")
 	public void delete(@PathVariable Long id) {
-		// DELETE FROM tb_postagens WHERE id = ?
-		
-		Optional<Postagem> optional = postagemRepository.findById(id);
-		
-		if (optional.isEmpty()) {
+
+		Optional<Postagem> postagem = postagemRepository.findById(id);
+
+		if (postagem.isEmpty())
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-		}
-		else {
-			postagemRepository.deleteById(id);
-		}
+
+		postagemRepository.deleteById(id);
+
+		/* DELETE FROM tb_postagens WHERE id = id */
 	}
 }

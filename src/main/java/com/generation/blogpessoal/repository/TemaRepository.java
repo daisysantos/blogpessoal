@@ -11,7 +11,7 @@ public interface TemaRepository extends JpaRepository<Tema, Long>{
 		
 		List<Tema> findAllByDescricaoContainingIgnoreCase(@Param("descricao")String descricao); 
 		
-		/*SELECT * FROM tb_temass WHERE descricao LIKE "%descricao%"; */
+		
 	}
 
 

@@ -90,5 +90,6 @@ public class UsuarioService {
 	private String criptografarSenha(String senha) {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		return encoder.encode(senha);
+	
 	}
 }

@@ -128,7 +128,7 @@ public class UsuarioControllerTest {
 	}
 	
 	@Test
-	@DisplayName(" Deve procurar Usuário por id")
+	@DisplayName("😎 Deve procurar Usuário por id")
 	public void DeveProcurarUsuarioPorId() {
 		
 		usuarioService.cadastrarUsuario(new Usuario(0L,
